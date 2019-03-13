@@ -65,3 +65,50 @@ export default () => (
 ```
 When using the `<Link />` component to link between pages make sure the destination page already exists or else the link will go to the Gatsby 404 page.
 Links to pages outside of the Gatsby project are to use the HTML `<a>` tag.
+
+## Part 2
+Global styles can be created with a `.css` file and can be imported to the `gatsby-browser.js` file to apply the style globally.
+```javascript
+// gatsby-browser.js
+
+import './src/styles/global.css'
+```
+Using CSS Modules is another way of creating and writing `.css` files as `.module.css` files. CSS Modules can be imported in component files.
+```css
+// src/components/container.module.css
+
+.container {
+  margin: 3rem auto;
+  max-width: 600px;
+}
+```
+```jsx
+// src/components/container.js
+
+import React from 'react'
+import containerStyles from './container.module.css'
+
+export default ({ children }) => (
+  <div className={containerStyles.container}>{children}</div>
+)
+```
+The `containerStyles` in the className is the name given when the `.module.css` is imported. The `.container` after `containerStyles` is the CSS class in the `.css` file.
+```
+             import name   CSS class
+className={containerStyles.container}
+```
+The `<Container />` component can be called in any page where the `.module.css` style can be applied.
+```jsx
+// src/pages/about-css-modules.js
+
+import React from 'react'
+import styles from './about-css-modules.module.css'
+import Container from '../components/container'
+
+export default () => (
+  <Container>
+    <h1>About CSS Modules</h1>
+    <p>CSS Modules are cool</p>
+  </Container>
+)
+```
