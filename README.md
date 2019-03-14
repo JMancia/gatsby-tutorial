@@ -112,3 +112,94 @@ export default () => (
   </Container>
 )
 ```
+
+## Part 3
+The `gatsby-config.js` file is where plugins and other site configurations are added.
+In this case, after installing Typography.js it can be added to the `gatsby-config.js` file.
+```javascript
+// gatsby-config.js
+
+module.exports = {
+  plugins: [
+    {
+      resolve: `gatsby-plugin-typography`,
+      options: {
+        pathToConfigModule: `src/utils/typography`,
+      },
+    },
+  ],
+}
+```
+A `typography.js` file is required inside the `src/utils/` directory.
+Inside the `typography.js` file the themes that were installed can be imported and be automatically applied to the page.
+```javascript
+// src/utils/typography.js
+
+import Typography from 'typography'
+import fairyGateTheme from 'typography-theme-fairy-gates'
+
+const typography = new Typography(fairyGateTheme)
+
+export const { scale, rhythm, options } = typography
+export default typography
+```
+Layout components can be created and added to pages to apply consistent layout styles to the site.
+```jsx
+// src/components/layout.js
+
+import React from 'react'
+
+export default ({ children }) => (
+  <div style={{ margin: `3rem auto`, maxWidth: 650, padding: `0 1rem` }}>
+    <h3>MySweetSite</h3>
+    {children}
+  </div>
+)
+```
+The call to `{children}` will be the content that is placed within the `<Layout>...</Layout>` component tag.
+```jsx
+// src/pages/index.js
+
+import React from 'react'
+import Layout from '../components/layout'
+
+export default () => (
+  <Layout>
+    <h1>Hi! I'm building a fake Gatsby site as part of a tutorial!</h1>
+    <p>
+      What do I like to do? Lots of course but definitely enjoy building
+      websites.
+    </p>
+  </Layout>
+)
+```
+
+Page navigation to other pages can also be added to the layout component.
+```jsx
+// src/components/layout.js
+
+import React from 'react'
+import { Link } from 'gatsby'
+
+const ListLink = props => (
+  <li style={{ display: `inline-block`, marginRight: `1rem` }}>
+    <Link to={props.to}>{props.children}</Link>
+  </li>
+)
+
+export default ({ children }) => (
+  <div style={{ margin: `3rem auto`, maxWidth: 650, padding: `0 1rem` }}>
+    <header style={{ marginBottom: `1.5rem` }}>
+      <Link to="/" style={{ textShadow: `none`, backgroundImage: `none` }}>
+        <h3 style={{ display: `inline` }}>MySweetSite</h3>
+      </Link>
+      <ul style={{ listStyle: `none`, float: `right` }}>
+        <ListLink to="/">Home</ListLink>
+        <ListLink to="/about/">About</ListLink>
+        <ListLink to="/contact/">Contact</ListLink>
+      </ul>
+    </header>
+    {children}
+  </div>
+)
+```
