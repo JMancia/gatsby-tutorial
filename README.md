@@ -203,3 +203,73 @@ export default ({ children }) => (
   </div>
 )
 ```
+
+## Part 4
+To avoid editing the same title for each page, the title can be added to the `gatsby-config.js` file and can then be queried to other pages or components.
+```javascript
+// gatsby-config.js
+
+module.exports = {
+  siteMetadata: {
+    title: `Pandas Eating Lots`,
+  },
+  ...
+}
+```
+GraphQL is used to query the data on the page. The example below is a page query.
+```jsx
+// src/pages/about.js
+
+import React from 'react'
+import { graphql } from 'gatsby'
+import Layout from '../components/layout'
+
+export default ({ data }) => (
+  <Layout>
+    <h1>About {data.site.siteMetadata.title}</h1>
+  </Layout>
+)
+
+export const query = graphql`
+  query {
+    site {
+      siteMetadata {
+        title
+      }
+    }
+  }
+`
+```
+Page queries are only available on page components. The example below is a StaticQuery.
+If a query needs to be used outside of a page component, like in the `<Layout />` component, the `<StaticQuery />` can be used.
+```jsx
+// src/components/layout.js
+
+import React from 'react'
+import { StaticQuery, Link, graphql } from 'gatsby'
+
+export default ({ children }) => (
+  <StaticQuery
+    query={graphql`
+      query {
+        site {
+          siteMetadata {
+            title
+          }
+        }
+      }
+    `}
+    render={data => (
+      <div>
+        <Link to="/">
+          <h3>
+            {data.site.siteMetadata.title}
+          </h3>
+        </Link>
+        {children}
+      </div>
+    )}
+  />
+)
+```
+To get the same title across all pages, the title can be queried in the `<Layout />` component using the `<StaticQuery />`.
