@@ -273,3 +273,77 @@ export default ({ children }) => (
 )
 ```
 To get the same title across all pages, the title can be queried in the `<Layout />` component using the `<StaticQuery />`.
+
+## Part 5
+The `gatsby-source-filesystem` fetches data from the filesystem.
+To add it to the project it needs to be installed through NPM and added to `gatsby-config.js`.
+```javascript
+// gatsby-config.js
+
+module.exports = {
+  plugins: [
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `src`,
+        path: `${__dirname}/src/`,
+      },
+    },
+  ],
+}
+```
+GraphQL queries can be created and previewed in GraphiQL on localhost.
+GraphQL queries can be added to a page by defining a query variable with the data that is to be queried.
+```jsx
+// src/pages/my-files.js
+
+import React from 'react'
+import { graphql } from 'gatsby'
+import Layout from '../components/layout'
+
+export default ({ data }) => {
+  console.log(data)
+  return (
+    <Layout>
+      <div>
+        <h1>My Site's Files</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>relativePath</th>
+              <th>prettySize</th>
+              <th>extension</th>
+              <th>birthTime</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.allFile.edges.map(({ node }, index) => (
+              <tr key={index}>
+                <td>{node.relativePath}</td>
+                <td>{node.prettySize}</td>
+                <td>{node.extension}</td>
+                <td>{node.birthTime}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Layout>
+  )
+}
+
+export const query = graphql`
+  query {
+    allFile {
+      edges {
+        node {
+          relativePath
+          prettySize
+          extension
+          birthTime(fromNow: true)
+        }
+      }
+    }
+  }
+`
+```
