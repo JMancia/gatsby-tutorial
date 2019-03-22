@@ -347,3 +347,63 @@ export const query = graphql`
   }
 `
 ```
+
+## Part 6
+Data inside of a markdown file can be retrieved through a transformer plugin.
+The plugin used to transform markdown files is `gatsby-transformer-remark`
+The `gatsby-transformer-remark` plugin needs to be added to `gatsby-config.js`.
+```javascript
+// gatsby-config.js
+
+module.exports = {
+  plugins: [
+    `gatsby-transformer-remark`,
+  ],
+}
+```
+After adding the plugin to `gatsby-config.js` and restarting the server, `allMarkdownRemark` and `markdownRemark` should appear in the GraphQL IDE dropdown to query the markdown data.
+
+A query is created for markdown file's data fields.
+To access the GraphQL query data a call to the map function is made.
+```javascript
+import React from 'react'
+import { graphql } from 'gatsby'
+import Layout from '../components/layout'
+
+export default ({ data }) => {
+  return (
+    <Layout>
+      <h1>
+        Amazing Pandas Eating Things
+      </h1>
+      <h4>{data.allMarkdownRemark.totalCount} Posts</h4>
+      {data.allMarkdownRemark.edges.map(({ node }) => (
+        <div key={node.id}>
+          <h3>
+            {node.frontmatter.title} - {node.frontmatter.date}
+          </h3>
+          <p>{node.excerpt}</p>
+        </div>
+      ))}
+    </Layout>
+  )
+}
+
+export const quer = graphql`
+  query {
+    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+      totalCount
+      edges {
+        node {
+          id
+          frontmatter {
+            title
+            date(formatString: "DD MMMM, YYYY")
+          }
+          excerpt
+        }
+      }
+    }
+  }
+`
+```
